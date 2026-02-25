@@ -1,0 +1,16 @@
+# python
+__pycache__/
+*.pyc
+
+# virtual env
+venv/
+.env
+
+# database
+*.db
+
+# alembic cache
+migrations/__pycache__/
+
+# vscode
+.vscode/
