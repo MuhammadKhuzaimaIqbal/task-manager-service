@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc, asc
+from sqlalchemy import select, desc, asc, delete
 from typing import List, Optional
 
 from app.database import get_db
@@ -98,4 +98,10 @@ async def delete_task(task_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
         
     await db.delete(task)
+    await db.commit()
+
+
+@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_all_tasks(db: AsyncSession = Depends(get_db)):
+    await db.execute(delete(Task))
     await db.commit()
