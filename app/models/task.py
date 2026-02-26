@@ -4,7 +4,6 @@ from sqlalchemy import String, func
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 
-# Define our Enums for strictly typed choices
 class TaskStatus(str, enum.Enum):
     todo = "todo"
     in_progress = "in_progress"
@@ -16,7 +15,6 @@ class TaskPriority(str, enum.Enum):
     high = "high"
     urgent = "urgent"
 
-# Define the SQLAlchemy Model
 class Task(Base):
     __tablename__ = "tasks"
 

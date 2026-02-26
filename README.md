@@ -66,14 +66,15 @@ task_manager_api/
 ### 1. Clone project & enter folder
 
 ```
-git clone <repo_url>
+git clone https://github.com/MuhammadKhuzaimaIqbal/task-manager-service.git
 cd task_manager_api
+
 ```
 
 ### 2. Create virtual environment
 
 ```
-python -m venv venv
+python -m venv venv 
 venv\Scripts\activate
 
 ```
