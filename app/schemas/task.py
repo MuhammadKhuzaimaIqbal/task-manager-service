@@ -12,7 +12,7 @@ class TaskBase(BaseModel):
     due_date: Optional[datetime] = None
 
 class TaskCreate(TaskBase):
-    pass 
+    pass
 
 class TaskUpdate(BaseModel):
     title: Optional[str] = Field(None, max_length=200)
@@ -23,6 +23,7 @@ class TaskUpdate(BaseModel):
 
 class TaskResponse(TaskBase):
     id: int
+    user_id: Optional[int]
     created_at: datetime
     updated_at: datetime
 
