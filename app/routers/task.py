@@ -31,6 +31,7 @@ async def create_task(
 
 @router.get("/", response_model=List[TaskResponse])
 async def get_tasks(
+    current_user: CurrentUser,
     status: Optional[TaskStatus] = Query(None, description="Filter by status"),
     priority: Optional[TaskPriority] = Query(None, description="Filter by priority"),
     sort_by: str = Query(
@@ -40,7 +41,6 @@ async def get_tasks(
     order: str = Query("desc", description="Sort order: 'asc' or 'desc'"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(10, ge=1, le=100, description="Items per page"),
-    current_user: CurrentUser = Depends(),
     db: AsyncSession = Depends(get_db),
 ):
     stmt = select(Task)

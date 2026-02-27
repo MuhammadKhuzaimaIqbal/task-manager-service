@@ -166,8 +166,8 @@ async def refresh_token(
 
 
 async def get_current_user(
+    db: DBSession,
     token: str = Depends(oauth2_scheme),
-    db: DBSession = Depends(get_db),
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
