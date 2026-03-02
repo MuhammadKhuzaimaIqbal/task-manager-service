@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import bcrypt
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
@@ -19,7 +19,8 @@ from app.schemas.user import (
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+# Use HTTPBearer so in Swagger you can paste your access token in Authorize (no username/password form).
+http_bearer = HTTPBearer()
 
 
 def hash_password(password: str) -> str:
@@ -167,8 +168,9 @@ async def refresh_token(
 
 async def get_current_user(
     db: DBSession,
-    token: str = Depends(oauth2_scheme),
+    credentials=Depends(http_bearer),
 ) -> User:
+    token = credentials.credentials
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",

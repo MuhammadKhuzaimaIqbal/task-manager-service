@@ -28,6 +28,7 @@ class UserLogin(BaseModel):
 
 class UserResponse(UserBase):
     id: int
+    email: str = Field(..., description="User email")  # str so existing DB values (e.g. test data) don't fail EmailStr
     role: UserRole
     is_active: bool
     created_at: datetime

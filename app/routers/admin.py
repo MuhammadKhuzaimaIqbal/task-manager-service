@@ -1,10 +1,11 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
+from app.models.task import Task
 from app.models.user import User, UserRole
 from app.routers.auth import CurrentUser
 from app.schemas.user import UserResponse
@@ -46,6 +47,8 @@ async def delete_user(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
 
+    # Delete or unlink tasks owned by this user first to avoid FK/lock issues
+    await db.execute(delete(Task).where(Task.user_id == user_id))
     await db.delete(user)
     await db.commit()
 
