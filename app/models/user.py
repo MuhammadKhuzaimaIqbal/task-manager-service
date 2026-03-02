@@ -3,6 +3,9 @@ from datetime import datetime
 from sqlalchemy import String, Boolean, func
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
+from app.models.task import Task
+# Relationship to attachments
+    attachments: Mapped[list[Attachment]] = relationship("Attachment", back_populates="task")
 
 
 class UserRole(str, enum.Enum):
@@ -21,3 +24,4 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
+    tasks: Mapped[list[Task]] = relationship("Task", back_populates="user")
