@@ -1,17 +1,35 @@
+import os
+import uuid
+from fastapi import UploadFile, File
+
+from app.models.attachment import Attachment
+from app.routers.auth import CurrentUser
+from app.schemas.attachment import AttachmentResponse
+
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc, asc, delete
-from typing import List, Optional
+from typing import List, Optional,Annotated
 
 from app.database import get_db
 from app.models.task import Task, TaskStatus, TaskPriority
 from app.schemas.task import TaskCreate, TaskUpdate, TaskResponse
+from app.routers.auth import get_current_user # Import the function, not just the alias
+from app.models.user import User  # Add this line
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
-@router.post("/", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
-async def create_task(task_in: TaskCreate, db: AsyncSession = Depends(get_db)):
-    new_task = Task(**task_in.model_dump())
+@router.post("/", response_model=TaskResponse, status_code=201)
+async def create_task(
+    task_in: TaskCreate,
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db)
+):
+    new_task = Task(
+        **task_in.model_dump(),
+        user_id=current_user.id
+    )
+
     db.add(new_task)
     await db.commit()
     await db.refresh(new_task)
@@ -105,3 +123,7 @@ async def delete_task(task_id: int, db: AsyncSession = Depends(get_db)):
 async def delete_all_tasks(db: AsyncSession = Depends(get_db)):
     await db.execute(delete(Task))
     await db.commit()
+
+@router.post("/test-single-upload")
+async def test_upload(file: UploadFile = File(...)):
+    return {"filename": file.filename}
