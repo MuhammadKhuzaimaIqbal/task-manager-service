@@ -4,7 +4,11 @@ from datetime import datetime
 from sqlalchemy import Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
-from app.models.task import Task
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.models.task import Task
 
 class Attachment(Base):
     __tablename__ = "attachments"
@@ -17,4 +21,7 @@ class Attachment(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationship to Task
-    task: Mapped[Task] = relationship("Task", back_populates="attachments")
+    task: Mapped["Task"] = relationship(
+    "Task",
+    back_populates="attachments"
+)

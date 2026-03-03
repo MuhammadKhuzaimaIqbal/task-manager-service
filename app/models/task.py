@@ -1,10 +1,15 @@
 import enum
 from datetime import datetime
-from sqlalchemy import String, func
+from sqlalchemy import String, func, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 from sqlalchemy.orm import relationship
-from app.models.attachment import Attachment
+from app.models.attachment import Attachment  
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.models.attachment import Attachment
 
 class TaskStatus(str, enum.Enum):
     todo = "todo"
@@ -28,8 +33,12 @@ class Task(Base):
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
     due_date: Mapped[datetime | None] = mapped_column(default=None)
-    user_id: int = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     user = relationship("User", back_populates="tasks")
 
     # Relationship to attachments
-    attachments: Mapped[list[Attachment]] = relationship("Attachment", back_populates="task")
+    attachments: Mapped[list["Attachment"]] = relationship(
+    "Attachment",
+    back_populates="task",
+    cascade="all, delete-orphan"
+)
